@@ -9,7 +9,7 @@ public abstract class LogoutCommand implements Command {
 
 	@Override
 	public boolean expectsResponse() {
-		return false;
+		return true;
 	}
 
 	@Override

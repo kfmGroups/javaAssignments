@@ -16,7 +16,7 @@ public class LoginInfo {
 	
 	public boolean isPasswordCorrect(String userName, String passwordEntered){
 		String passwordExist = passwords.get(userName);
-		return passwordExist != null && passwordEntered.equals(passwordEntered) ;
+		return passwordExist != null && passwordEntered.equals(passwordExist);
 	}
 	
 }

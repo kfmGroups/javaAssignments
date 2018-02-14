@@ -62,16 +62,16 @@ class Client {
 			userArguments.args = new String[userCommand.getNumberOfArguments()];
 			for (int i = 0; i < userArguments.args.length; i++) {
 				try {
-					userArguments.args[i] = user.readLine();
+					userArguments.args[i] = user.readLine(); 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 			
-			userArguments.toServer = toServer;
+			userArguments.streamToServerandFromServer = toServer;
 			userArguments.keepRunning = true;
 			toServer.println(userCommand.getCommand());
-			userCommand.execute(userArguments);
+			userCommand.execute(userArguments, "");
 			if(!userArguments.keepRunning){
 				break;
 			}

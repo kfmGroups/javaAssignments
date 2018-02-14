@@ -4,7 +4,7 @@ public class Message {
   private final String sender;
   private final String text;
 
-  Message(String sender, String text) {
+  public Message(String sender, String text) {
     this.sender = sender;
     this.text = text;
   }

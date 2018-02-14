@@ -35,9 +35,10 @@ public class Server {
 				BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				
 				PrintStream toClient = new PrintStream(socket.getOutputStream());
-
+				
 				// We create and start a new thread to read from the client:
 				Thread serverReciver = new ServerReceiver(toClient, fromClient, loginInfo);
+				ServerSender serverSender = new ServerSender(toClient);
 								
 				serverReciver.start();
 				

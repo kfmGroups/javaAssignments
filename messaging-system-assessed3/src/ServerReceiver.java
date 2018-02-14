@@ -14,12 +14,12 @@ public class ServerReceiver extends Thread {
 	private PrintStream toClient;
 	private BufferedReader fromClient;
 	private volatile boolean isRunning = true;
-	private LoginInfo loginInfo;
+	private String clientName;
+	
 
 	public ServerReceiver(PrintStream toClient, BufferedReader fromClient, LoginInfo loginInfo) {
 		this.toClient = toClient;
 		this.fromClient = fromClient;
-		this.loginInfo = loginInfo;
 	}
 
 	public void run() {
@@ -33,18 +33,19 @@ public class ServerReceiver extends Thread {
 				continue;
 			}
 			userArguments.args = new String[userCommand.getNumberOfArguments()];
-			System.out.println(userCommand.getNumberOfArguments());
 			for (int i = 0; i < userArguments.args.length; i++) {
 				try {
 					userArguments.args[i] = fromClient.readLine();
-					System.out.println(userArguments.args[i]);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			userArguments.toServer = toClient;
+			userArguments.streamToServerandFromServer = toClient;
 			userArguments.keepRunning = true;
-			userCommand.execute(userArguments);
+			if(userCommand.getCommand().equals("login")){
+				clientName = userArguments.args[0];
+			}
+			userCommand.execute(userArguments, clientName);
 			if (!userArguments.keepRunning) {
 				break;
 			}
