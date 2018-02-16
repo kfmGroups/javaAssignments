@@ -8,11 +8,6 @@ public abstract class LogoutCommand implements Command {
 	}
 
 	@Override
-	public boolean expectsResponse() {
-		return true;
-	}
-
-	@Override
 	public String getCommand() {
 		return "logout";
 	}

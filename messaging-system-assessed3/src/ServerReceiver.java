@@ -1,4 +1,5 @@
 package assignment;
+
 import java.net.*;
 import java.io.*;
 import java.util.concurrent.*;
@@ -15,7 +16,6 @@ public class ServerReceiver extends Thread {
 	private BufferedReader fromClient;
 	private volatile boolean isRunning = true;
 	private String clientName;
-	
 
 	public ServerReceiver(PrintStream toClient, BufferedReader fromClient, LoginInfo loginInfo) {
 		this.toClient = toClient;
@@ -25,8 +25,7 @@ public class ServerReceiver extends Thread {
 	public void run() {
 
 		while (isRunning) {
-			
-			
+
 			CommandArguments userArguments = new ServerCommandArguments();
 			Command userCommand = Command.readCommand(fromClient, true);
 			if (userCommand == null) {
@@ -42,7 +41,7 @@ public class ServerReceiver extends Thread {
 			}
 			userArguments.streamToServerandFromServer = toClient;
 			userArguments.keepRunning = true;
-			if(userCommand.getCommand().equals("login")){
+			if (userCommand.getCommand().equals("login")) {
 				clientName = userArguments.args[0];
 			}
 			userCommand.execute(userArguments, clientName);
@@ -50,11 +49,10 @@ public class ServerReceiver extends Thread {
 				break;
 			}
 
-			
 		}
 	}
-	
-	public void kill() { 
-		isRunning = false; 
-		}
+
+	public void kill() {
+		isRunning = false;
+	}
 }

@@ -1,6 +1,6 @@
 package command;
 
-public abstract class SendCommand implements Command{
+public abstract class SendCommand implements Command {
 
 	@Override
 	public int getNumberOfArguments() {
@@ -8,14 +8,8 @@ public abstract class SendCommand implements Command{
 	}
 
 	@Override
-	public boolean expectsResponse() {
-		return false;
-	}
-
-	@Override
 	public String getCommand() {
 		return "send";
 	}
-	
 
 }

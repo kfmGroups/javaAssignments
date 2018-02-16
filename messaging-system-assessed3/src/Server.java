@@ -1,5 +1,6 @@
 package assignment;
 // Usage:
+
 //        java Server
 //
 // There is no provision for ending the server gracefully.  It will
@@ -14,7 +15,7 @@ public class Server {
 
 		// This table will be shared by the server threads:
 		ClientTable clientTable = new ClientTable();
-		
+
 		LoginInfo loginInfo = new LoginInfo();
 
 		ServerSocket serverSocket = null;
@@ -29,19 +30,20 @@ public class Server {
 			// We loop for ever, as servers usually do.
 			while (true) {
 				// Listen to the socket, accepting connections from new clients:
-				Socket socket = serverSocket.accept(); // Matches AAAAA in Client
+				Socket socket = serverSocket.accept(); // Matches AAAAA in
+														// Client
 
 				// This is so that we can use readLine():
 				BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				
+
 				PrintStream toClient = new PrintStream(socket.getOutputStream());
 				
+
 				// We create and start a new thread to read from the client:
 				Thread serverReciver = new ServerReceiver(toClient, fromClient, loginInfo);
-				ServerSender serverSender = new ServerSender(toClient);
-								
+
 				serverReciver.start();
-				
+
 				Thread cleanResources = new Thread(new Runnable() {
 					@Override
 					public void run() {

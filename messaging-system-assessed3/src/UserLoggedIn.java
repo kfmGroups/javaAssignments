@@ -18,5 +18,9 @@ public class UserLoggedIn {
 	public boolean contains(String user){
 		return usersLoggedIn.contains(user);
 	}
+	
+	public boolean removeUser(String user){
+		return usersLoggedIn.remove(user);
+	}
 
 }

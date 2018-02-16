@@ -21,9 +21,10 @@ import java.net.*;
 import command.Command;
 import command.CommandArguments;
 
-class Client {
+public class Client {
 
 	public static final String QUIT = "quit";
+	private static String clientName;
 	
 
 	public static void main(String[] args) {
@@ -50,6 +51,9 @@ class Client {
 			Report.errorAndGiveUp("The server doesn't seem to be running " + e.getMessage());
 		}
 		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
+		
+		Thread clientReciever = new ClientReceiver(fromServer);
+		clientReciever.start();
 
 		while (true) {
 
@@ -70,29 +74,27 @@ class Client {
 			
 			userArguments.streamToServerandFromServer = toServer;
 			userArguments.keepRunning = true;
-			toServer.println(userCommand.getCommand());
-			userCommand.execute(userArguments, "");
-			if(!userArguments.keepRunning){
-				break;
+			if (userCommand.getCommand().equals("login")) {
+				clientName = userArguments.args[0];
 			}
-			
-			if(userCommand.expectsResponse()){
-				try {
-					System.out.println(fromServer.readLine());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			toServer.println(userCommand.getCommand());
+			userCommand.execute(userArguments, clientName);
+			if(!userArguments.keepRunning){	
+				break;
 			}
 		}
 
 		// Wait for them to end and close sockets.
 		try {
-
+			clientReciever.join();
 			toServer.close();
 			fromServer.close();
 			server.close();
 		} catch (IOException e) {
 			Report.errorAndGiveUp("Something wrong " + e.getMessage());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

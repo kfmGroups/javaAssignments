@@ -19,11 +19,11 @@ public class ClientTable {
 		queueTable.put(nickname, new ArrayList<Message>());
 		indexOfUser.put(nickname, -1);
 	}
-	
-	public void addUserMessage(String nickname, Message message){
+
+	public void addUserMessage(String nickname, Message message) {
 		queueTable.get(nickname).add(message);
-		int value =indexOfUser.get(nickname);
-		indexOfUser.put(nickname, value+1);
+		int value = indexOfUser.get(nickname);
+		indexOfUser.put(nickname, value + 1);
 	}
 
 	// Returns null if the nickname is not in the table:
@@ -31,13 +31,26 @@ public class ClientTable {
 		return queueTable.get(nickname);
 	}
 
-	public void remove(String myClientsName, BlockingQueue<Message> clientsQueue) {
+	public void remove(String myClientsName, ArrayList<Message> clientsQueue) {
 		queueTable.remove(myClientsName, clientsQueue);
 	}
-	
-	public int getIndex(String clientName){
+
+	public int getIndex(String clientName) {
 		return indexOfUser.get(clientName);
 	}
-	
-	
+
+	public int getSize(String clientName) {
+		return queueTable.size();
+	}
+
+	public int getPreviousMessageIndex(String name) {
+		int value = indexOfUser.get(name);
+		if (value < 0) {
+			// do nothing
+		} else {
+			indexOfUser.put(name, value - 1);
+		}
+		return indexOfUser.get(name);
+	}
+
 }

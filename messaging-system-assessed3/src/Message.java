@@ -20,4 +20,8 @@ public class Message {
   public String toString() {
     return "From " + sender + ": " + text;
   }
+  
+  public String toEncrypedString() {
+	  return "From " + sender + ": " + Encryptor.encrypt(text);  
+  }
 }

@@ -1,6 +1,6 @@
 package command;
 
-public abstract class LoginCommand implements Command{
+public abstract class LoginCommand implements Command {
 
 	@Override
 	public int getNumberOfArguments() {
@@ -8,14 +8,8 @@ public abstract class LoginCommand implements Command{
 	}
 
 	@Override
-	public boolean expectsResponse() {
-		return true;
-	}
-
-	@Override
 	public String getCommand() {
 		return "login";
 	}
-	
-	
+
 }

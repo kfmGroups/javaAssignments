@@ -1,9 +1,11 @@
 
 package command.server;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
+import assignment.Encryptor;
 import assignment.Message;
 import assignment.Report;
 import command.CommandArguments;
@@ -15,13 +17,25 @@ public class SendInServer extends SendCommand {
 	@Override
 	public void execute(CommandArguments userInput, String ClientName) {
 		ServerCommandArguments userArguments = (ServerCommandArguments) userInput;
-		if (userArguments.args[1] != null) {
-			Message msg = new Message(ClientName, userArguments.args[1]);
-			ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg); // Matches EEEEE in ServerSender.java
-		}
+		String reciepientMessage = Encryptor.decrypt(userArguments.args[1]);
+		if(ServerCommandArguments.usersLoggedIn.contains(ClientName)) {
+			if (userArguments.args[1] != null) {
+			
+				Message msg = new Message(ClientName, reciepientMessage);
+				ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg); // Matches EEEEE in ServerSender.java
+			}
+			
+			
+			Message recipeientMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
+			
+			PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(userArguments.args[0]);
+			if(reciepientStream != null){
+				reciepientStream.println(recipeientMsg.toEncrypedString());
+			}
 		
-		Message recipeientMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
-		userArguments.streamToServerandFromServer.println(recipeientMsg);
+		
+		}else{
+			userInput.streamToServerandFromServer.println("you have to login before you can send messages");
+		}
 	}
-
 }
