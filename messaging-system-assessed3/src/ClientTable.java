@@ -39,18 +39,33 @@ public class ClientTable {
 		return indexOfUser.get(clientName);
 	}
 
-	public int getSize(String clientName) {
-		return queueTable.size();
-	}
-
 	public int getPreviousMessageIndex(String name) {
-		int value = indexOfUser.get(name);
+		int value = indexOfUser.get(name) - 1;
 		if (value < 0) {
-			// do nothing
+			return -1;
 		} else {
-			indexOfUser.put(name, value - 1);
+			indexOfUser.put(name, value);
 		}
 		return indexOfUser.get(name);
+	}
+
+	public int getNextMessageIndex(String name) {
+		int value = (indexOfUser.get(name)) + 1;
+		if (value >= getQueue(name).size()) {
+			return getQueue(name).size();
+		} else {
+			indexOfUser.put(name, value);
+		}
+		return indexOfUser.get(name);
+	}
+
+	public void removeUserMessageIndex(String name) {
+		int value = getIndex(name);
+		getQueue(name).remove(value);
+		if (value >= getQueue(name).size()) {
+			indexOfUser.put(name, value - 1);
+		}
+
 	}
 
 }

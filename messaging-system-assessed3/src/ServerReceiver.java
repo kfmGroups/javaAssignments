@@ -23,33 +23,37 @@ public class ServerReceiver extends Thread {
 	}
 
 	public void run() {
+		try {
+			while (isRunning) {
 
-		while (isRunning) {
+				CommandArguments userArguments = new ServerCommandArguments();
+				Command userCommand = Command.readCommand(fromClient, true);
+				if (userCommand == null) {
+					continue;
+				}
+				userArguments.args = new String[userCommand.getNumberOfArguments()];
+				for (int i = 0; i < userArguments.args.length; i++) {
 
-			CommandArguments userArguments = new ServerCommandArguments();
-			Command userCommand = Command.readCommand(fromClient, true);
-			if (userCommand == null) {
-				continue;
-			}
-			userArguments.args = new String[userCommand.getNumberOfArguments()];
-			for (int i = 0; i < userArguments.args.length; i++) {
-				try {
 					userArguments.args[i] = fromClient.readLine();
-				} catch (IOException e) {
-					e.printStackTrace();
+
+				}
+				userArguments.streamToServerandFromServer = toClient;
+				userArguments.keepRunning = true;
+				if (userCommand.getCommand().equals("login")) {
+					clientName = userArguments.args[0];
+				}
+				userCommand.execute(userArguments, clientName);
+				if (!userArguments.keepRunning) {
+					break;
 				}
 			}
-			userArguments.streamToServerandFromServer = toClient;
-			userArguments.keepRunning = true;
-			if (userCommand.getCommand().equals("login")) {
-				clientName = userArguments.args[0];
-			}
-			userCommand.execute(userArguments, clientName);
-			if (!userArguments.keepRunning) {
-				break;
-			}
-
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NullPointerException ex) {
+			ServerCommandArguments.usersLoggedIn.removeUser(clientName);
+			CommandArguments.usersLoggedIn.removeUser(clientName);
 		}
+
 	}
 
 	public void kill() {

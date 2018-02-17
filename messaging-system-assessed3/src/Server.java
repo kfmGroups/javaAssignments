@@ -13,7 +13,7 @@ public class Server {
 
 	public static void main(String[] args) {
 
-		// This table will be shared by the server threads:
+		// This table will be shared by the server threads:   
 		ClientTable clientTable = new ClientTable();
 
 		LoginInfo loginInfo = new LoginInfo();
