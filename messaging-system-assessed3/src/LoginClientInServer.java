@@ -18,8 +18,7 @@ public class LoginClientInServer extends LoginCommand {
 				ServerCommandArguments.usersLoggedIn.addUser(userArguments.args[0]);
 				ServerCommandArguments.userStream.addUserStream(clientName, userArguments.streamToServerandFromServer);
 				if (ServerCommandArguments.clientTable.getIndex(userArguments.args[0]) != -1) {
-					Message clientsMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0])
-							.get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
+					Message clientsMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
 					if (clientsMsg != null) {
 						userArguments.streamToServerandFromServer.println(clientsMsg.toEncrypedString());
 					}

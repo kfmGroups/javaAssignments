@@ -20,6 +20,7 @@ import java.net.*;
 
 import command.Command;
 import command.CommandArguments;
+import command.ServerCommandArguments;
 
 public class Client {
 
@@ -75,7 +76,11 @@ public class Client {
 			userArguments.streamToServerandFromServer = toServer;
 			userArguments.keepRunning = true;
 			if (userCommand.getCommand().equals("login")) {
-				clientName = userArguments.args[0];
+				if(!CommandArguments.usersLoggedIn.contains(userArguments.args[0])){
+					clientName = userArguments.args[0];
+				}else{
+					clientName = "";
+				}
 			}
 			toServer.println(userCommand.getCommand());
 			userCommand.execute(userArguments, clientName);

@@ -19,7 +19,7 @@ public class LogClientOutServer extends LogoutCommand {
 		} else {
 			userInput.streamToServerandFromServer.println("to logout you must login in");
 		}
-		;
+
 	}
 
 }

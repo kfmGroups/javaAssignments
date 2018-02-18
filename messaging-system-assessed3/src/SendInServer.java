@@ -19,25 +19,30 @@ public class SendInServer extends SendCommand {
 		ServerCommandArguments userArguments = (ServerCommandArguments) userInput;
 		String reciepientMessage = Encryptor.decrypt(userArguments.args[1]);
 		if (ServerCommandArguments.usersLoggedIn.contains(ClientName)) {
-			if (userArguments.args[1] != null) {
+			if (!ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).isEmpty()) {
+				if (userArguments.args[1] != null) {
 
-				if ((ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0]))) {
-					Message msg = new Message(ClientName, reciepientMessage);
-					ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg);
-					Message recipeientMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
-					PrintStream reciepientStream = ServerCommandArguments.userStream
-							.getUserStream(userArguments.args[0]);
-					if (reciepientStream != null) {
-						reciepientStream.println(recipeientMsg.toEncrypedString());
+					if ((ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0]))) {
+						Message msg = new Message(ClientName, reciepientMessage);
+						ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg);
+						Message recipeientMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
+						PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(userArguments.args[0]);
+						if (reciepientStream != null) {
+							reciepientStream.println(recipeientMsg.toEncrypedString());
+						}
+					} else {
+						Message msg = new Message(ClientName, reciepientMessage);
+						ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg);
 					}
-				} else {
-					Message msg = new Message(ClientName, reciepientMessage);
-					ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg);
 				}
+			} else {
+				userInput.streamToServerandFromServer.println("You cannot send a message to an unregistered user");
 			}
-		} else {
-			userInput.streamToServerandFromServer.println("you have to login before you can send messages");
-		}
 
+		}else{
+			userInput.streamToServerandFromServer.println("you have to login before you can utilize the send command");
+		}
 	}
 }
+//ServerCommandArguments.usersLoggedIn.contains(ClientName)
+//ServerCommandArguments.clientTable.getQueue(userArguments.args[0]) != null

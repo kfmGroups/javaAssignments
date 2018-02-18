@@ -28,10 +28,7 @@ public class PreviousMessage extends PreviousCommand {
 				reciepientStream.println("You have have no previous messages");
 			}
 		} else {
-			PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(clientName);
-			if (reciepientStream != null) {
-				reciepientStream.println("You have to login to utilize the next command");
-			}
+			userInput.streamToServerandFromServer.println("You have to login to utilize the previous command");
 		}
 	}
 }

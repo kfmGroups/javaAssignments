@@ -20,9 +20,9 @@ public class ClientReceiver extends Thread {
 		// Print to the user whatever we get from the server:
 		try {
 			while (isRunning) {
+
 				String s = server.readLine(); // Matches FFFFF in
 												// ServerSender.java
-
 				if (s != null) {
 					String[] sArr = s.split(" ");
 					if (s.equals(Client.QUIT)) {

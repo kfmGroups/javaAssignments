@@ -40,7 +40,11 @@ public class ServerReceiver extends Thread {
 				userArguments.streamToServerandFromServer = toClient;
 				userArguments.keepRunning = true;
 				if (userCommand.getCommand().equals("login")) {
-					clientName = userArguments.args[0];
+					if (!ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0])) {
+						clientName = userArguments.args[0];
+					} else {
+						clientName = "";
+					}
 				}
 				userCommand.execute(userArguments, clientName);
 				if (!userArguments.keepRunning) {

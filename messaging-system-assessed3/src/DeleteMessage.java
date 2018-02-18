@@ -12,16 +12,17 @@ public class DeleteMessage extends DeleteCommand {
 	public void execute(CommandArguments userInput, String clientName) {
 
 		if (ServerCommandArguments.usersLoggedIn.contains(clientName)) {
-			ServerCommandArguments.clientTable.removeUserMessageIndex(clientName);
-			PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(clientName);
-			if (reciepientStream != null) {
-				reciepientStream.println("current message deleted");
+			if (!ServerCommandArguments.clientTable.getQueue(clientName).isEmpty()) {
+				ServerCommandArguments.clientTable.removeUserMessageIndex(clientName);
+				PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(clientName);
+				if (reciepientStream != null) {
+					reciepientStream.println("current message deleted");
+				}
+			}else{
+				userInput.streamToServerandFromServer.println("there are no messages to delete");
 			}
 		} else {
-			PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(clientName);
-			if (reciepientStream != null) {
-				reciepientStream.println("you must login to utilize the delete command");
-			}
+			userInput.streamToServerandFromServer.println("You have to login to utilize the next command");
 		}
 	}
 
