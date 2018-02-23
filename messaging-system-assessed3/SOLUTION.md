@@ -1,5 +1,4 @@
 
-
 #Solution approach
 #A brief explanation as to how my system is going to function.
 First of all, I approached this problem by creating an interface called Command which led to the definition of unimplemented methods such as getNumberofArguments(), execute(), getCommand() and finally a static readCommand(). Afterwards, created a class called CommandArguments and another ServerCommandArguments an extension of CommandArguments. CommandArguments consist of a set of public variables namely whihch are going to represent the arguments entered by the user from the command line, an array which stores the users list of arguments, their stream(which cold be to the server and from the server) and also the client the user enters whiles ServerCommandArguments stores all data belonging to the server whiles the ServerCommandArgument will consist o fthe login table, clienttable user whom are logged in,  a table storing the streams of users and finally a timer and the time task object which which perform saving operation over a specified time preriod.  
@@ -10,3 +9,6 @@ Finally, I had a final set of classes which handled operations on both the serve
 
 #Register
 For registrtaion when the register(command )is passed as an input, my system, passes on the input to the readCommand() which takes in the user stream(System.in) and boolean value false, thus causing an object(new RegisterClient()) to be creatred
+For registration 
+from the client via readCommand(), the first class created just sends the user credentials(clientName and password)  received from the command line as I said I defined above  via an execute method but before its called, from the abstract register Command class on the command will know how many arguments to expect from the user via the implementation of my abstract class. For which the command entered is sent to the serverReciever which also reads via its readCommand() also create an object meant for registering the client in the server. This is done via the execute method called from the serverReciever.
+Which this class created try checks if the user has already been registered ifa
