@@ -3,15 +3,16 @@ public class LogClientOutServer extends LogoutCommand {
 
 	@Override
 	public void execute(CommandArguments userInput, String client) {
-		if (ServerCommandArguments.usersLoggedIn.contains(client)) {
-			userInput.keepRunning = false;
-			ServerCommandArguments.usersLoggedIn.removeUser(client);
-			userInput.streamToServerandFromServer.println("logged out successfully");
-			userInput.streamToServerandFromServer.println(Client.QUIT);
-			ServerCommandArguments.userStream.removeUserStream(client);
-		}
-		userInput.streamToServerandFromServer.println("to logout you must login in");
+		ServerCommandArguments userArguments = (ServerCommandArguments) userInput;
+		if (ServerCommandArguments.usersLoggedIn.contains(userArguments.clientName)) {
 
+			ServerCommandArguments.usersLoggedIn.removeUser(userArguments.clientName);
+			userInput.streamToServerandFromServer.println("logged out successfully");
+			ServerCommandArguments.userStream.removeUserStream(userArguments.clientName);
+			userArguments.clientName = null;
+		} else {
+			userInput.streamToServerandFromServer.println("to logout you must login");
+		}
 	}
 
 }

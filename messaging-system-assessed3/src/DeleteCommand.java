@@ -11,4 +11,9 @@ public abstract class DeleteCommand implements Command {
 		return "delete";
 	}
 
+	@Override
+	public boolean mustBeLoggedIn() {
+		return true;
+	}
+
 }

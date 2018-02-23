@@ -10,5 +10,10 @@ public abstract class LogoutCommand implements Command {
 	public String getCommand() {
 		return "logout";
 	}
+	
+	@Override
+	public boolean mustBeLoggedIn() {
+		return true;
+	}
 
 }

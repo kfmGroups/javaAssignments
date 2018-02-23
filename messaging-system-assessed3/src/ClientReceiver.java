@@ -36,12 +36,8 @@ public class ClientReceiver extends Thread {
 						String decryptedMessage = Encryptor.decrypt(s.substring(s.indexOf(":") + 2));
 						System.out.println(s.substring(0, splitIndex) + decryptedMessage);
 					} else {
-
-						String success = "logged in successfully: ";
-						if (s.startsWith("logged in successfully: ")) {
-							clientName = s.substring(success.length());
-							s = "logged in successfully: "+ clientName;
-							Client.setUserName(clientName);
+						if(s.startsWith("Error: ")){
+							Client.setUserName(null);
 						}
 						System.out.println(s);
 					}

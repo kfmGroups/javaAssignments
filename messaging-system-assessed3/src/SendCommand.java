@@ -11,4 +11,9 @@ public abstract class SendCommand implements Command {
 		return "send";
 	}
 
+	@Override
+	public boolean mustBeLoggedIn() {
+		return true;
+	}
+
 }

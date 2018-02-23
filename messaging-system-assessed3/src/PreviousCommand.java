@@ -13,4 +13,9 @@ public abstract class PreviousCommand implements Command {
 		return "previous";
 	}
 
+	@Override
+	public boolean mustBeLoggedIn() {
+		return true;
+	}
+
 }

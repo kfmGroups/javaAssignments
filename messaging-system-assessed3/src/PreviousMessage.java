@@ -5,7 +5,7 @@ public class PreviousMessage extends PreviousCommand {
 
 	@Override
 	public void execute(CommandArguments userInput, String clientName) {
-		System.out.println(ServerCommandArguments.usersLoggedIn.contains(clientName));
+
 		if (!ServerCommandArguments.usersLoggedIn.contains(clientName)) {
 			userInput.streamToServerandFromServer.println("You have to login to utilize the previous command");
 			return;

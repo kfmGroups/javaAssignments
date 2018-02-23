@@ -7,7 +7,6 @@
 
 import java.net.*;
 
-
 import java.io.*;
 
 public class Server {
@@ -15,7 +14,7 @@ public class Server {
 	public static void main(String[] args) {
 
 		// This table will be shared by the server threads:
-		
+
 		ServerSocket serverSocket = null;
 
 		try {
@@ -25,18 +24,17 @@ public class Server {
 		}
 
 		try {
-			 
+
 			ServerCommandArguments.loginInfo.loadInServer();
 			ServerCommandArguments.clientTable.loadRegisteredUsers();
 			ServerCommandArguments.clientTable.loadUserIndex();
-			ServerCommandArguments.usersLoggedIn.loadInServer();
 
-			ServerCommandArguments.myTimer.scheduleAtFixedRate(ServerCommandArguments.task, 1000, 10000);
+			ServerCommandArguments.myTimer.scheduleAtFixedRate(ServerCommandArguments.task, 1000, 1000);
 			while (true) {
 				// Listen to the socket, accepting connections from new clients:
 				Socket socket = serverSocket.accept(); // Matches AAAAA in
 														// Client
-				
+
 				// This is so that we can use readLine():
 				BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -46,8 +44,7 @@ public class Server {
 				Thread serverReciver = new ServerReceiver(toClient, fromClient);
 
 				serverReciver.start();
-				
-				
+
 				Thread cleanResources = new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -66,6 +63,7 @@ public class Server {
 					}
 				});
 				cleanResources.start();
+
 			}
 		}
 

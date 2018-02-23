@@ -10,13 +10,13 @@ public class ServerCommandArguments extends CommandArguments {
 	public static UserLoggedIn usersLoggedIn = new UserLoggedIn();
 	public static StreamTable userStream = new StreamTable();
 	public static Timer myTimer = new Timer();
+	public String clientName;
 
 	public static TimerTask task = new TimerTask() {
 
 		public void run() {
 
 			ServerCommandArguments.loginInfo.saveInServer();
-			ServerCommandArguments.usersLoggedIn.saveInServer();
 			ServerCommandArguments.clientTable.saveRegisteredUserandMessages();
 			ServerCommandArguments.clientTable.saveUserIndex();
 

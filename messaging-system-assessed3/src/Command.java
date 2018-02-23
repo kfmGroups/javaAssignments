@@ -8,7 +8,7 @@ import java.io.IOException;
 public interface Command {
 	int getNumberOfArguments();//for each command entered it knows the number of arguments to expect
 	void execute(CommandArguments userInput, String clientName); //based on the command entered it knows what to execute
-	
+	boolean mustBeLoggedIn();
 	//to know whether it will respond or not.
 	public static Command readCommand(BufferedReader userInputStream, boolean isServer){
 		try {
@@ -27,6 +27,8 @@ public interface Command {
 				return new NextMessage();
 			}else if(command.equals("delete")){
 				 return new DeleteMessage();
+			}else if(command.equals("quit")){
+				return isServer? new QuitServer() : new QuitClient();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

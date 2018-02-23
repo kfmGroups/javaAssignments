@@ -11,7 +11,7 @@ public class SendInServer extends SendCommand {
 	public void execute(CommandArguments userInput, String ClientName) {
  		ServerCommandArguments userArguments = (ServerCommandArguments) userInput;
 		String reciepientMessage = Encryptor.decrypt(userArguments.args[1]);
-		if (!ServerCommandArguments.usersLoggedIn.contains(ClientName)) {
+		if (!ServerCommandArguments.usersLoggedIn.contains(userArguments.clientName)) {
 			userInput.streamToServerandFromServer.println("you have to login before you can utilize the send command");
 			return;
 		}
@@ -24,7 +24,7 @@ public class SendInServer extends SendCommand {
 		if (userArguments.args[1] != null) {
 
 			if ((ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0]))) {
-				Message msg = new Message(ClientName, reciepientMessage);
+				Message msg = new Message(userArguments.clientName, reciepientMessage);
 				ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg);
 				Message recipeientMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).size() - 1);
 				PrintStream reciepientStream = ServerCommandArguments.userStream.getUserStream(userArguments.args[0]);
@@ -32,7 +32,7 @@ public class SendInServer extends SendCommand {
 					reciepientStream.println(recipeientMsg.toEncrypedString());
 				}
 			} else {
-				Message msg = new Message(ClientName, reciepientMessage);
+				Message msg = new Message(userArguments.clientName, reciepientMessage);
 				ServerCommandArguments.clientTable.addUserMessage(userArguments.args[0], msg);
 			}
 		}

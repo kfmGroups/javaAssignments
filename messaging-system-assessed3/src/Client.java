@@ -70,18 +70,13 @@ public class Client {
 
 			userArguments.streamToServerandFromServer = toServer;
 			userArguments.keepRunning = true;
-			if (userCommand.getCommand().equals("login")) {
 
-				if (client != null) {
-					System.out.println("you can login only once");
-					userArguments.setClientLoggedName(client);
-					continue;
-
-				}
-
+			boolean loggedIn = client != null;
+			if (loggedIn != userCommand.mustBeLoggedIn()) {
+				String userStatus = loggedIn ? "out" : "in";
+				System.out.println("you must be logged " + userStatus + " to use " + userCommand.getCommand());
+				continue;
 			}
-
-			System.out.println(client);
 			toServer.println(userCommand.getCommand());
 			userCommand.execute(userArguments, client);
 			if (!userArguments.keepRunning) {
@@ -105,9 +100,8 @@ public class Client {
 
 	}
 
-	public static void setUserName(String name) {
+	public synchronized static void setUserName(String name) {
 		client = name;
-		System.out.println(client);
 	}
 
 }

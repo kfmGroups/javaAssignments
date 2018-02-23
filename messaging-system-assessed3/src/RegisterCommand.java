@@ -12,4 +12,9 @@ public abstract class RegisterCommand implements Command {
 		return 2;
 	}
 
+	@Override
+	public boolean mustBeLoggedIn() {
+		return false;
+	}
+
 }

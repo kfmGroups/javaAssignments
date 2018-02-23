@@ -1,10 +1,9 @@
 
-
-public class LogsTheClientOut extends LogoutCommand {
+public class QuitClient extends QuitCommand {
 
 	@Override
 	public void execute(CommandArguments userInput, String clientName) {
-		Client.setUserName(null);
+		userInput.keepRunning = false;
 
 	}
 
