@@ -1,38 +1,39 @@
-package command.server;
-
-import assignment.Encryptor;
-import assignment.Message;
-import command.CommandArguments;
-import command.LoginCommand;
-import command.ServerCommandArguments;
 
 public class LoginClientInServer extends LoginCommand {
 
 	@Override
 	public void execute(CommandArguments userInput, String clientName) {
+
 		ServerCommandArguments userArguments = (ServerCommandArguments) userInput;
 		String clientPassword = Encryptor.decrypt(userArguments.args[1]);
-		if (!(ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0]))) {
-			if (ServerCommandArguments.loginInfo.isPasswordCorrect(userArguments.args[0], clientPassword)) {
 
-				ServerCommandArguments.usersLoggedIn.addUser(userArguments.args[0]);
-				ServerCommandArguments.userStream.addUserStream(clientName, userArguments.streamToServerandFromServer);
-				if (ServerCommandArguments.clientTable.getIndex(userArguments.args[0]) != -1) {
-					Message clientsMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0]).get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
-					if (clientsMsg != null) {
-						userArguments.streamToServerandFromServer.println(clientsMsg.toEncrypedString());
-					}
-				} else {
-					userArguments.streamToServerandFromServer.println("logged in successfully");
-				}
+		if (!ServerCommandArguments.loginInfo.isPasswordCorrect(userArguments.args[0], clientPassword)) {
+			userArguments.streamToServerandFromServer.println("invalid user or password");
+			return;
+		}
+		if (ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0])) {
+			userArguments.streamToServerandFromServer.println("you have already logged in a device");
+			return;
+		}
 
-			} else {
-				userArguments.streamToServerandFromServer.println("invalid user or password");
+		ServerCommandArguments.usersLoggedIn.addUser(userArguments.args[0]);
+		ServerCommandArguments.userStream.addUserStream(userArguments.args[0],userArguments.streamToServerandFromServer);
+		if (ServerCommandArguments.clientTable.getIndex(userArguments.args[0]) != -1) {
+			Message clientsMsg = ServerCommandArguments.clientTable.getQueue(userArguments.args[0])
+					.get(ServerCommandArguments.clientTable.getIndex(userArguments.args[0]));
+
+			if (clientsMsg != null) {
+				userArguments.streamToServerandFromServer.println("logged in successfully: " + userArguments.args[0]);
+				userArguments.streamToServerandFromServer.println("current message: ");
+				userArguments.streamToServerandFromServer.println(clientsMsg.toEncrypedString());
+
 			}
 		} else {
-			userArguments.streamToServerandFromServer.println("you have logged in another device");
+
+			userArguments.streamToServerandFromServer.println("logged in successfully: " + userArguments.args[0]);
 
 		}
+
 	}
 
 }

@@ -1,4 +1,3 @@
-package command;
 
 public abstract class PreviousCommand implements Command {
 

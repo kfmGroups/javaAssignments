@@ -1,4 +1,3 @@
-package assignment;
 
 // Usage:
 //        java Client user-nickname server-hostname
@@ -18,23 +17,19 @@ package assignment;
 import java.io.*;
 import java.net.*;
 
-import command.Command;
-import command.CommandArguments;
-import command.ServerCommandArguments;
-
 public class Client {
 
 	public static final String QUIT = "quit";
-	private static String clientName;
-	
+
+	static String client = null;
 
 	public static void main(String[] args) {
-
 		// Check correct usage:
 		if (args.length != 1) {
 			Report.errorAndGiveUp("Usage: java Client server-hostname");
 		}
-
+		// CommandArguments.loginInfo.load();
+		// CommandArguments.usersLoggedIn.load();
 		String hostname = args[0];
 		// Open sockets:
 		PrintStream toServer = null;
@@ -52,13 +47,13 @@ public class Client {
 			Report.errorAndGiveUp("The server doesn't seem to be running " + e.getMessage());
 		}
 		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
-		
-		Thread clientReciever = new ClientReceiver(fromServer);
+
+		Thread clientReciever = new ClientReceiver(fromServer, client);
 		clientReciever.start();
 
 		while (true) {
 
-			CommandArguments userArguments = new CommandArguments();//holds the user arguments and info about the stream to the server.
+			CommandArguments userArguments = new CommandArguments();
 			Command userCommand = Command.readCommand(user, false);
 			if (userCommand == null) {
 				System.out.println("invalid command");
@@ -67,28 +62,32 @@ public class Client {
 			userArguments.args = new String[userCommand.getNumberOfArguments()];
 			for (int i = 0; i < userArguments.args.length; i++) {
 				try {
-					userArguments.args[i] = user.readLine(); 
+					userArguments.args[i] = user.readLine();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			
+
 			userArguments.streamToServerandFromServer = toServer;
 			userArguments.keepRunning = true;
 			if (userCommand.getCommand().equals("login")) {
-				if(!CommandArguments.usersLoggedIn.contains(userArguments.args[0])){
-					clientName = userArguments.args[0];
-				}else{
-					clientName = "";
+
+				if (client != null) {
+					System.out.println("you can login only once");
+					userArguments.setClientLoggedName(client);
+					continue;
+
 				}
+
 			}
+
+			System.out.println(client);
 			toServer.println(userCommand.getCommand());
-			userCommand.execute(userArguments, clientName);
-			if(!userArguments.keepRunning){	
+			userCommand.execute(userArguments, client);
+			if (!userArguments.keepRunning) {
 				break;
 			}
 		}
-
 		// Wait for them to end and close sockets.
 		try {
 			clientReciever.join();
@@ -100,6 +99,15 @@ public class Client {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NullPointerException ex) {
+
 		}
+
 	}
+
+	public static void setUserName(String name) {
+		client = name;
+		System.out.println(client);
+	}
+
 }

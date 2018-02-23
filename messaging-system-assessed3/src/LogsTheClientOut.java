@@ -1,19 +1,15 @@
-package command.client;
 
-import assignment.*;
-import command.CommandArguments;
-import command.LogoutCommand;
-import command.ServerCommandArguments;
 
 public class LogsTheClientOut extends LogoutCommand {
 
 	@Override
 	public void execute(CommandArguments userInput, String clientName) {
-
-		if (CommandArguments.usersLoggedIn.contains(clientName)) {
+		
+		if (clientName != null) {
+			System.out.println("This is my name: "+clientName);
 			userInput.keepRunning = false;
-			CommandArguments.usersLoggedIn.removeUser(clientName);
 		}
+
 	}
 
 }

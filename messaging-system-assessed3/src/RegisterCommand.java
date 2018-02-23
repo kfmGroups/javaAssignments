@@ -1,6 +1,3 @@
-package command;
-
-import command.Command;
 
 public abstract class RegisterCommand implements Command {
 

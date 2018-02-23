@@ -1,4 +1,3 @@
-package assignment;
 // Usage:
 
 //        java Server
@@ -7,17 +6,16 @@ package assignment;
 // end if (and only if) something exceptional happens.
 
 import java.net.*;
+
+
 import java.io.*;
 
 public class Server {
 
 	public static void main(String[] args) {
 
-		// This table will be shared by the server threads:   
-		ClientTable clientTable = new ClientTable();
-
-		LoginInfo loginInfo = new LoginInfo();
-
+		// This table will be shared by the server threads:
+		
 		ServerSocket serverSocket = null;
 
 		try {
@@ -27,23 +25,29 @@ public class Server {
 		}
 
 		try {
-			// We loop for ever, as servers usually do.
+			 
+			ServerCommandArguments.loginInfo.loadInServer();
+			ServerCommandArguments.clientTable.loadRegisteredUsers();
+			ServerCommandArguments.clientTable.loadUserIndex();
+			ServerCommandArguments.usersLoggedIn.loadInServer();
+
+			ServerCommandArguments.myTimer.scheduleAtFixedRate(ServerCommandArguments.task, 1000, 10000);
 			while (true) {
 				// Listen to the socket, accepting connections from new clients:
 				Socket socket = serverSocket.accept(); // Matches AAAAA in
 														// Client
-
+				
 				// This is so that we can use readLine():
 				BufferedReader fromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 				PrintStream toClient = new PrintStream(socket.getOutputStream());
-				
 
 				// We create and start a new thread to read from the client:
-				Thread serverReciver = new ServerReceiver(toClient, fromClient, loginInfo);
+				Thread serverReciver = new ServerReceiver(toClient, fromClient);
 
 				serverReciver.start();
-
+				
+				
 				Thread cleanResources = new Thread(new Runnable() {
 					@Override
 					public void run() {
@@ -71,5 +75,6 @@ public class Server {
 			// A more sophisticated approach could try to establish a new
 			// connection. But this is beyond the scope of this simple exercise.
 		}
+
 	}
 }

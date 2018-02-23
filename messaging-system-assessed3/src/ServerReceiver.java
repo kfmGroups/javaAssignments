@@ -1,12 +1,8 @@
-package assignment;
 
 import java.net.*;
 import java.io.*;
 import java.util.concurrent.*;
 
-import command.Command;
-import command.CommandArguments;
-import command.ServerCommandArguments;
 
 // Gets messages from client and puts them in a queue, for another
 // thread to forward to the appropriate client.
@@ -16,8 +12,9 @@ public class ServerReceiver extends Thread {
 	private BufferedReader fromClient;
 	private volatile boolean isRunning = true;
 	private String clientName;
+	private String client;
 
-	public ServerReceiver(PrintStream toClient, BufferedReader fromClient, LoginInfo loginInfo) {
+	public ServerReceiver(PrintStream toClient, BufferedReader fromClient) {
 		this.toClient = toClient;
 		this.fromClient = fromClient;
 	}
@@ -40,22 +37,35 @@ public class ServerReceiver extends Thread {
 				userArguments.streamToServerandFromServer = toClient;
 				userArguments.keepRunning = true;
 				if (userCommand.getCommand().equals("login")) {
-					if (!ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0])) {
-						clientName = userArguments.args[0];
-					} else {
-						clientName = "";
+
+					if ((ServerCommandArguments.loginInfo.isPasswordCorrect(userArguments.args[0],
+							Encryptor.decrypt(userArguments.args[1])))) {
+
+						if (!ServerCommandArguments.usersLoggedIn.contains(userArguments.args[0])) {
+
+							clientName = userArguments.args[0];
+							client = clientName;
+
+						} else {
+							client = userArguments.args[0];
+						}
+
 					}
+
 				}
-				userCommand.execute(userArguments, clientName);
+
+				System.out.println("execute called");
+				userCommand.execute(userArguments, client);
 				if (!userArguments.keepRunning) {
 					break;
 				}
+				System.out.println("after called");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (NullPointerException ex) {
-			ServerCommandArguments.usersLoggedIn.removeUser(clientName);
-			CommandArguments.usersLoggedIn.removeUser(clientName);
+			ServerCommandArguments.usersLoggedIn.removeUser(client);
+			ServerCommandArguments.usersLoggedIn.saveInServer();
 		}
 
 	}

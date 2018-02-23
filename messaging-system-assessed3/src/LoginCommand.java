@@ -1,4 +1,3 @@
-package command;
 
 public abstract class LoginCommand implements Command {
 

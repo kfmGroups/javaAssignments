@@ -1,0 +1,21 @@
+jak390
+bkc721 
+exb461 
+kak907 
+kjm409 
+mehboobi 
+mxs512
+pxa395
+rrs268
+sxv512
+mhe jak390  bkc721  exb461  kak907  kjm409  mehboobi  mxs512 pxa395 rrs268 sxv512
+#Solution approach
+#A brief explanation as to how my system is going to function.
+First of all, I approached this problem by creating an interface called Command which led to the definition of unimplemented methods such as getNumberofArguments(), execute(), getCommand() and finally a static readCommand(). Afterwards, created a class called CommandArguments and another ServerCommandArguments an extension of CommandArguments. CommandArguments consist of a set of public variables namely whihch are going to represent the arguments entered by the user from the command line, an array which stores the users list of arguments, their stream(which cold be to the server and from the server) and also the client the user enters whiles ServerCommandArguments stores all data belonging to the server whiles the ServerCommandArgument will consist o fthe login table, clienttable user whom are logged in,  a table storing the streams of users and finally a timer and the time task object which which perform saving operation over a specified time preriod.  
+
+In addition, I created abstract classes for implementing method bodies for specific types of command. Such as register, login and logout etc. Thus, for each type of command(abstract classes) was specified how many arguments were required from the command line(getNumeberOfArguments based on the particular type of command entered by the user of the program and also a method to return the name of the command(getCommmand()).
+
+Finally, I had a final set of classes which handled operations on both the server side and clientside and they all extended the a specific abstract class. These classes were created based on what the static method readCommand() read, where based on the userinput provided through an if-condition and boolean variable drove the decision making process of my system on whether to create an object to handle client side operations in the system or to handle the server side oprations in my sysytem.  
+
+#Register
+For registrtaion when the register(command )is passed as an input, my system, passes on the input to the readCommand() which takes in the user stream(System.in) and boolean value false, thus causing an object(new RegisterClient()) to be creatred
