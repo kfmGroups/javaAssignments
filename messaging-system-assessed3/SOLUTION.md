@@ -1,14 +1,5 @@
-jak390
-bkc721 
-exb461 
-kak907 
-kjm409 
-mehboobi 
-mxs512
-pxa395
-rrs268
-sxv512
-mhe jak390  bkc721  exb461  kak907  kjm409  mehboobi  mxs512 pxa395 rrs268 sxv512
+
+
 #Solution approach
 #A brief explanation as to how my system is going to function.
 First of all, I approached this problem by creating an interface called Command which led to the definition of unimplemented methods such as getNumberofArguments(), execute(), getCommand() and finally a static readCommand(). Afterwards, created a class called CommandArguments and another ServerCommandArguments an extension of CommandArguments. CommandArguments consist of a set of public variables namely whihch are going to represent the arguments entered by the user from the command line, an array which stores the users list of arguments, their stream(which cold be to the server and from the server) and also the client the user enters whiles ServerCommandArguments stores all data belonging to the server whiles the ServerCommandArgument will consist o fthe login table, clienttable user whom are logged in,  a table storing the streams of users and finally a timer and the time task object which which perform saving operation over a specified time preriod.  
