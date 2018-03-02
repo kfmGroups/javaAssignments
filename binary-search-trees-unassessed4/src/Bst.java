@@ -1,10 +1,13 @@
+package bst;
+
+
 
 
 /*
  * Interface for immutable binary search trees.
  */
 
-public interface Bst <E extends Comparable<E>> {
+public interface Bst <E extends Comparable<E>>  extends Iterable<E>{
   public boolean isEmpty();
   public boolean smaller(E e); // Checks whether all nodes smaller than e.
   public boolean bigger(E e);  // Checks whether all nodes bigger than e.
@@ -20,7 +23,9 @@ public interface Bst <E extends Comparable<E>> {
   public String  fancyToString(int d);// Starting at a given position d.
   public int size(); //returns the size of the binary search tree.
   public int height();//returns the height of the binary search tree.
-  public Bst<E> balance(); // returns a balance tree
+  public Bst<E> balanced(); // returns a balance tree
   public int saveInOrder(E[] a, int nextAvailableIndex);
-  Bst<E> balanced(int start, int end, E[] elements);
+  public Bst<E> getLeft();
+  public Bst<E> getRight();
+ 
 }

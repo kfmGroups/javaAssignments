@@ -1,3 +1,4 @@
+package bst;
 import java.util.Arrays;
 
 public class Sample3 {
@@ -20,16 +21,16 @@ public class Sample3 {
     System.out.println(t6);
     System.out.println(t6.fancyToString());
     IntString[] bsTArr = new IntString[t6.size()];
-    t6.saveInOrder(bsTArr, 0);
-    System.out.println("array saved in order: "+Arrays.toString(bsTArr));
-    System.out.println("balanced tree: "+(t6.balanced(0, t6.size(), bsTArr)).fancyToString());
-    
-    //System.out.println(t4.fancyToString());
-    //t4.balance();
-    
-    //System.out.println(t4.fancyToString());
-	System.out.println("size: " + t4.size());
-	 System.out.println("height: " +t4.height());
+//    t6.saveInOrder(bsTArr, 0);
+//    System.out.println("array saved in order: "+Arrays.toString(bsTArr));
+//    System.out.println("balanced tree: "+(t6.balanced(0, t6.size(), bsTArr)).fancyToString());
+//    
+//    //System.out.println(t4.fancyToString());
+//    //t4.balance();
+//    
+//    //System.out.println(t4.fancyToString());
+//	System.out.println("size: " + t4.size());
+//	 System.out.println("height: " +t4.height());
    /* Bst<IntString> t4 = t3.insert(new IntString(4,"xyz"));
     System.out.println(t4);
 

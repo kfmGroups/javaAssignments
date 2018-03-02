@@ -1,3 +1,4 @@
+package bst;
 
 /*
  * Type of pairs consisting of an int and a String, compared by the

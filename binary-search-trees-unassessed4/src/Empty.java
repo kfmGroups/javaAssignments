@@ -1,3 +1,7 @@
+package bst;
+
+import java.util.Iterator;
+
 /*
  * Empty.java
  *
@@ -87,13 +91,27 @@ public class Empty<E extends Comparable<E>> implements Bst<E> {
 	}
 
 	@Override
-	public Bst<E> balanced(int start, int end, E[] elements) {
-		return new Empty<E>();
+	public Bst<E> getLeft() {
+
+		throw new RuntimeException("Attempted to get left subtree of empty tree");
 	}
 
 	@Override
-	public Bst<E> balance() {
+	public Bst<E> getRight() {
 
-		return this;
+		throw new RuntimeException("Attempted to get right subtree of empty tree");
 	}
+
+	@Override
+	public Iterator<E> iterator() {
+
+		return new EmptyIterator<E>();
+	}
+
+	@Override
+	public Bst<E> balanced() {
+
+		return new Empty<E>();
+	}
+
 }
