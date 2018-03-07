@@ -51,8 +51,38 @@ public class DictionaryTree {
 	 * @return whether or not the parent can delete this node from its children
 	 */
 	boolean remove(String word) {
+		if (contains(word)) {
+			if (removeHelper(word)) {
+				for (int i = 2; i < word.length(); i++) {
+					if (!removeHelper(word.substring(0, word.length() - i)))
+						break;
+
+				}
+				return true;
+			}
+			return false;
+		}
 		return false;
 
+	}
+
+	boolean removeHelper(String word) {
+		DictionaryTree currentChild = this;
+		int count = 0;
+		for (char letter : word.toCharArray()) {
+			DictionaryTree parent = currentChild;
+			currentChild = currentChild.children.get(letter);
+			if (count == word.length() - 1) {
+				System.out.println(currentChild.children);
+				if (currentChild.children.isEmpty()) {
+					parent.children.remove(letter);
+					return true;
+				} else
+					return false;
+			}
+			count++;
+		}
+		return false;
 	}
 
 	/**
@@ -125,14 +155,16 @@ public class DictionaryTree {
 	 *         are not prefixes of any other word.
 	 */
 	int numLeaves() {
-		int numLeaves = 0;
-		int rooChildrenSize = children.size();
-		if (rooChildrenSize == 0) {
-			numLeaves += numLeaves + 1;
+
+		if (children.isEmpty()) {
+			return 1;
 		}
-		DictionaryTree currentChild = this;
+		int numLeaves = 0;
 		for (char letter : children.keySet()) {
-			
+			DictionaryTree childnode = children.get(letter);
+			if (childnode != null) {
+				numLeaves += childnode.numLeaves();
+			}
 		}
 
 		return numLeaves;
@@ -177,7 +209,17 @@ public class DictionaryTree {
 	 * @return the longest word in this tree
 	 */
 	String longestWord() {
-		throw new RuntimeException("DictionaryTree.longestWord not implemented yet");
+		int heightOfTree = -1;
+		String longestWord = "";
+		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
+			String word = childNodes.getValue().longestWord();
+			if(word.length() > heightOfTree){
+				
+				longestWord = childNodes.getKey()+ word;
+				heightOfTree = longestWord.length();
+			}
+		}
+		return longestWord;
 	}
 
 	/**

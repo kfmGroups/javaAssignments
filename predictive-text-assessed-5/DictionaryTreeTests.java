@@ -26,8 +26,38 @@ public class DictionaryTreeTests {
         unit.insert("word");
         unit.insert("work");
         unit.insert("wort");
-        System.out.println("num of leaves "+unit.numLeaves());
-        Assertions.assertEquals(2, unit.numLeaves());
+        unit.insert("wore");
+        Assertions.assertEquals(4, unit.numLeaves());
+    }
+    
+    @Test
+    public void removeShouldBe() {
+        DictionaryTree unit = new DictionaryTree();
+        unit.insert("word");
+        unit.insert("work");
+        unit.insert("wort");
+        unit.insert("wore");
+        Assertions.assertEquals(true, unit.remove("wore"));
+        Assertions.assertEquals(3, unit.numLeaves());
+    }
+    
+    @Test
+    public void containsShouldBeTrue() {
+        DictionaryTree unit = new DictionaryTree();
+        unit.insert("word");
+       
+        Assertions.assertEquals(true, unit.contains("word"));
+        
+    }
+    
+    @Test
+    public void longestWordShouldBeLonger() {
+        DictionaryTree unit = new DictionaryTree();
+        unit.insert("word");
+        unit.insert("longer");
+       
+        Assertions.assertEquals("longer", unit.longestWord());
+        
     }
 
 }
