@@ -10,6 +10,7 @@ import java.util.function.BiFunction;
 public class DictionaryTree {
 
 	private Map<Character, DictionaryTree> children = new LinkedHashMap<>();
+	private Optional<Integer> popularity = Optional.empty();
 
 	/**
 	 * Inserts the given word into this dictionary. If the word already exists,
@@ -36,9 +37,16 @@ public class DictionaryTree {
 	 *            the popularity of the inserted word
 	 */
 	void insert(String word, int popularity) {
-		// throw new RuntimeException("DictionaryTree.insert not implemented
-		// yet");
-		insert(word);
+		DictionaryTree currentChild = this;
+		int index = 0;
+		int lastIndex = word.length() - 1;
+		for (char letter : word.toCharArray()) {
+			currentChild = currentChild.children.computeIfAbsent(letter, (cha) -> new DictionaryTree());
+			if (index == lastIndex)
+				currentChild.popularity = Optional.of(popularity);
+			index++;
+		}
+
 	}
 
 	/**
@@ -213,9 +221,9 @@ public class DictionaryTree {
 		String longestWord = "";
 		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
 			String word = childNodes.getValue().longestWord();
-			if(word.length() > heightOfTree){
-				
-				longestWord = childNodes.getKey()+ word;
+			if (word.length() > heightOfTree) {
+
+				longestWord = childNodes.getKey() + word;
 				heightOfTree = longestWord.length();
 			}
 		}
@@ -226,7 +234,16 @@ public class DictionaryTree {
 	 * @return all words stored in this tree as a list
 	 */
 	List<String> allWords() {
-		throw new RuntimeException("DictionaryTree.allWords not implemented yet");
+		List<String> allWords = new ArrayList<String>();
+		if (popularity.isPresent())
+			allWords.add("");
+		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
+			List<String> allWordsFromChild = childNodes.getValue().allWords();
+			for (String word : allWordsFromChild) {
+				allWords.add(childNodes.getKey() + word);
+			}
+		}
+		return allWords;
 	}
 
 	/**

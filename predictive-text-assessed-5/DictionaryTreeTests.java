@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -21,7 +24,7 @@ public class DictionaryTreeTests {
     }
     
     @Test
-    public void numOfLeaveShouldBe() {
+    public void numOfLeaveShouldBeFour() {
         DictionaryTree unit = new DictionaryTree();
         unit.insert("word");
         unit.insert("work");
@@ -31,7 +34,7 @@ public class DictionaryTreeTests {
     }
     
     @Test
-    public void removeShouldBe() {
+    public void removeShouldBeTrue() {
         DictionaryTree unit = new DictionaryTree();
         unit.insert("word");
         unit.insert("work");
@@ -55,8 +58,23 @@ public class DictionaryTreeTests {
         DictionaryTree unit = new DictionaryTree();
         unit.insert("word");
         unit.insert("longer");
-       
         Assertions.assertEquals("longer", unit.longestWord());
+        
+    }
+    
+    @Test
+    public void allWordsInTreeShouldBeReturned() {
+        DictionaryTree unit = new DictionaryTree();
+        unit.insert("word",1);
+        unit.insert("work",2);
+        unit.insert("wort",3);
+        unit.insert("wore",4);
+        List<String> listOfAllWords = new ArrayList<String>();
+        listOfAllWords.add("word");
+        listOfAllWords.add("work");
+        listOfAllWords.add("wort");
+        listOfAllWords.add("wore");
+        Assertions.assertEquals(listOfAllWords, unit.allWords());
         
     }
 

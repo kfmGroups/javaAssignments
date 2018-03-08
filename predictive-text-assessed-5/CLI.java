@@ -21,8 +21,10 @@ public class CLI {
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             String word;
             DictionaryTree d = new DictionaryTree();
+            int i = 0;
             while ((word = reader.readLine()) != null) {
-                d.insert(word);
+                d.insert(word, i);
+                i++;
             }
 
             return d;
@@ -33,12 +35,12 @@ public class CLI {
         System.out.print("Loading dictionary ... ");
         DictionaryTree d = loadWords(new File(args[0]));
         System.out.println("done");
-
+        System.out.println(d.allWords().size());
         System.out.println("Enter prefixes for prediction below.");
 
         try (BufferedReader fromUser = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
-                System.out.println("---> " + d.predict(fromUser.readLine()));
+                System.out.println("---> " + d.predict(fromUser.readLine(), 3));
             }
         }
     }
