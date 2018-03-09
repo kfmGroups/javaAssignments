@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class DictionaryTree {
 
@@ -20,10 +23,7 @@ public class DictionaryTree {
 	 *            the word to insert
 	 */
 	void insert(String word) {
-		DictionaryTree currentChild = this;
-		for (char letter : word.toCharArray()) {
-			currentChild = currentChild.children.computeIfAbsent(letter, (cha) -> new DictionaryTree());
-		}
+		insert(word, 0);
 	}
 
 	/**
@@ -42,10 +42,9 @@ public class DictionaryTree {
 		int lastIndex = word.length() - 1;
 		for (char letter : word.toCharArray()) {
 			currentChild = currentChild.children.computeIfAbsent(letter, (cha) -> new DictionaryTree());
-			if (index == lastIndex)
-				currentChild.popularity = Optional.of(popularity);
 			index++;
 		}
+		currentChild.popularity = Optional.of(popularity);//from the root all the down it is a valid wpord
 
 	}
 
@@ -59,40 +58,34 @@ public class DictionaryTree {
 	 * @return whether or not the parent can delete this node from its children
 	 */
 	boolean remove(String word) {
+		boolean result = removeHelper(word);
+		prune();
+		return result;
+	}
+	private boolean removeHelper(String word){
+		if(word.isEmpty()){
+			popularity = Optional.empty();
+			return true;
+		}
+		
 		if (contains(word)) {
-			if (removeHelper(word)) {
-				for (int i = 2; i < word.length(); i++) {
-					if (!removeHelper(word.substring(0, word.length() - i)))
-						break;
-
-				}
-				return true;
-			}
-			return false;
+			return children.get(word.charAt(0)).remove(word.substring(1));
 		}
 		return false;
-
+		
 	}
-
-	boolean removeHelper(String word) {
-		DictionaryTree currentChild = this;
-		int count = 0;
-		for (char letter : word.toCharArray()) {
-			DictionaryTree parent = currentChild;
-			currentChild = currentChild.children.get(letter);
-			if (count == word.length() - 1) {
-				System.out.println(currentChild.children);
-				if (currentChild.children.isEmpty()) {
-					parent.children.remove(letter);
-					return true;
-				} else
-					return false;
+	void prune(){
+		for(Entry<Character, DictionaryTree> child: children.entrySet()){
+			List<PopularWord> popular = new ArrayList<>();
+			child.getValue().accumulate(popular, "");
+			if(popular.isEmpty()){
+				children.remove(child.getKey());
+			}else{
+				child.getValue().prune();
 			}
-			count++;
 		}
-		return false;
+		
 	}
-
 	/**
 	 * Determines whether or not the specified word is in this dictionary.
 	 *
@@ -137,23 +130,35 @@ public class DictionaryTree {
 			if (currentChild == null)
 				break;
 		}
-		ArrayList<String> results = new ArrayList<>();
+		ArrayList<PopularWord> results = new ArrayList<>();
 		if (currentChild != null) {
-			currentChild.accumulate(results, prefix, n);
+			currentChild.accumulate(results, prefix);
 		}
-		return results;
-
+		return results.stream()
+				.sorted((popularWord1, popularWord2) -> Integer.compare(popularWord1.popularity, popularWord2.popularity))
+				.limit(n)
+				.map((popularWord) -> popularWord.word)
+				.collect(Collectors.toList());
 	}
 
-	private void accumulate(List<String> accumulator, String prefix, int n) {
-		if (children.isEmpty()) {
-			accumulator.add(prefix);
-		} else {
+	private class PopularWord {
+		public PopularWord(String word, int popularity) {
+
+			this.word = word;
+			this.popularity = popularity;
+		}
+
+		public String word;
+		public int popularity;
+	}
+
+	private void accumulate(List<PopularWord> accumulator, String prefix) {
+		if (popularity.isPresent()) {
+			accumulator.add(new PopularWord(prefix, popularity.get()));
+		}
+		if(!children.isEmpty() ){
 			for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
-				if (accumulator.size() >= n) {
-					break;
-				}
-				childNodes.getValue().accumulate(accumulator, prefix + childNodes.getKey(), n);
+				childNodes.getValue().accumulate(accumulator, prefix + childNodes.getKey());
 			}
 		}
 	}
@@ -217,14 +222,13 @@ public class DictionaryTree {
 	 * @return the longest word in this tree
 	 */
 	String longestWord() {
-		int heightOfTree = -1;
 		String longestWord = "";
 		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
 			String word = childNodes.getValue().longestWord();
-			if (word.length() > heightOfTree) {
+			if (word.length() >= longestWord.length()) {
 
 				longestWord = childNodes.getKey() + word;
-				heightOfTree = longestWord.length();
+
 			}
 		}
 		return longestWord;
@@ -234,16 +238,9 @@ public class DictionaryTree {
 	 * @return all words stored in this tree as a list
 	 */
 	List<String> allWords() {
-		List<String> allWords = new ArrayList<String>();
-		if (popularity.isPresent())
-			allWords.add("");
-		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
-			List<String> allWordsFromChild = childNodes.getValue().allWords();
-			for (String word : allWordsFromChild) {
-				allWords.add(childNodes.getKey() + word);
-			}
-		}
-		return allWords;
+		List<PopularWord> allWords = new ArrayList<PopularWord>();
+		accumulate(allWords, "");
+		return allWords.stream().map((popularWord) -> popularWord.word).collect(Collectors.toList());
 	}
 
 	/**
@@ -260,6 +257,7 @@ public class DictionaryTree {
 	 * @return the result of folding the tree using f
 	 */
 	<A> A fold(BiFunction<DictionaryTree, Collection<A>, A> f) {
+		
 		ArrayList<A> cResults = new ArrayList<A>();
 		for (DictionaryTree child : children.values()) {
 			cResults.add(f.apply(child, cResults));

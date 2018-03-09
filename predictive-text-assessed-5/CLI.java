@@ -21,7 +21,7 @@ public class CLI {
         try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
             String word;
             DictionaryTree d = new DictionaryTree();
-            int i = 0;
+            int i = 1;
             while ((word = reader.readLine()) != null) {
                 d.insert(word, i);
                 i++;
@@ -40,7 +40,7 @@ public class CLI {
 
         try (BufferedReader fromUser = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
-                System.out.println("---> " + d.predict(fromUser.readLine(), 3));
+                System.out.println("---> " + d.predict(fromUser.readLine(), 5));
             }
         }
     }

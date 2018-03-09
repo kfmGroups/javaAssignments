@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -40,8 +41,9 @@ public class DictionaryTreeTests {
         unit.insert("work");
         unit.insert("wort");
         unit.insert("wore");
+        unit.insert("wores");
         Assertions.assertEquals(true, unit.remove("wore"));
-        Assertions.assertEquals(3, unit.numLeaves());
+        Assertions.assertEquals(4, unit.numLeaves());
     }
     
     @Test
@@ -65,16 +67,24 @@ public class DictionaryTreeTests {
     @Test
     public void allWordsInTreeShouldBeReturned() {
         DictionaryTree unit = new DictionaryTree();
-        unit.insert("word",1);
-        unit.insert("work",2);
-        unit.insert("wort",3);
-        unit.insert("wore",4);
-        List<String> listOfAllWords = new ArrayList<String>();
-        listOfAllWords.add("word");
-        listOfAllWords.add("work");
-        listOfAllWords.add("wort");
-        listOfAllWords.add("wore");
+        unit.insert("word");
+        unit.insert("work");
+        unit.insert("wort");
+        unit.insert("wore");
+        List<String> listOfAllWords = Arrays.asList("word", "work", "wort", "wore");
         Assertions.assertEquals(listOfAllWords, unit.allWords());
+        
+    }
+    
+    @Test
+    public void predictionTest() {
+        DictionaryTree unit = new DictionaryTree();
+        unit.insert("word", 19);
+        unit.insert("work", 3);
+        unit.insert("wizard", 1);
+        unit.insert("wore", 17);
+        List<String> listOfAllWords = Arrays.asList("wizard", "work", "wore", "word");
+        Assertions.assertEquals(listOfAllWords, unit.predict("w",4));
         
     }
 
