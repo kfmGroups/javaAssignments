@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-
+import java.util.regex.Pattern;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DictionaryTree {
 
@@ -25,10 +26,13 @@ public class DictionaryTree {
 	 */
 	void insert(String word) {
 		String errorMessage = "please enter a valid word";
+		String invalidInputMessage = "invalid input";
 		Optional<String> inputWord = Optional.ofNullable(word);
-		assert inputWord.get().length() > 0 : errorMessage;
-		System.out.println("word passed: "+inputWord.get());
-		insert(inputWord.get(), 0);
+		  // Pre-condition for this method to operate correctly:
+		assert  Pattern.matches("[a-zA-Z]+", inputWord.get()) : invalidInputMessage;
+		assert !inputWord.get().isEmpty(): errorMessage;
+		insert(word, 0);
+		
 		
 	}
 
@@ -43,6 +47,13 @@ public class DictionaryTree {
 	 *            the popularity of the inserted word
 	 */
 	void insert(String word, int popularity) {
+		String errorMessage = "please enter a valid word";
+		String invalidInputMessage = "invalid input";
+		Optional<String> inputWord = Optional.ofNullable(word);
+		Optional<Integer> inputPopularity = Optional.ofNullable(popularity);
+		  // Pre-condition for this method to operate correctly:
+		assert  Pattern.matches("[a-zA-Z]+", inputWord.get()) : invalidInputMessage;
+		assert !inputWord.get().isEmpty() && inputPopularity.isPresent(): errorMessage;
 		DictionaryTree currentChild = this;
 		int index = 0;
 		int lastIndex = word.length() - 1;
@@ -66,6 +77,10 @@ public class DictionaryTree {
 	 * @return whether or not the parent can delete this node from its children
 	 */
 	boolean remove(String word) {
+		
+		String errorMessage = "please enter a word in the dictionary";
+		  // Pre-condition for this method to operate correctly:
+		assert contains(word) : errorMessage;
 		boolean result = removeHelper(word);
 		prune();
 		return result;
@@ -78,6 +93,7 @@ public class DictionaryTree {
 		}
 
 		if (contains(word)) {
+			System.out.println("word being removed: "+word);
 			return children.get(word.charAt(0)).remove(word.substring(1));
 		}
 		return false;
@@ -106,10 +122,17 @@ public class DictionaryTree {
 	 *         otherwise
 	 */
 	boolean contains(String word) {
-		DictionaryTree currentChild = this;
+		String errorMessage = "please enter a valid word";
+		String invalidInputMessage = "invalid input";
+		Optional<String> inputWord = Optional.ofNullable(word);
+		  // Pre-condition for this method to operate correctly:
+		assert  Pattern.matches("[a-zA-Z]+", inputWord.get()) : invalidInputMessage;
+		assert !inputWord.get().isEmpty() : errorMessage;
+		
+		Optional<DictionaryTree> currentChild = Optional.of(this);
 		for (char letter : word.toCharArray()) {
-			currentChild = currentChild.children.get(letter);
-			if (currentChild == null)
+			currentChild = Optional.ofNullable(currentChild.get().children.get(letter));
+			if (!currentChild.isPresent())
 				return false;
 		}
 		return true;
@@ -122,7 +145,14 @@ public class DictionaryTree {
 	 *         no such word is found.
 	 */
 	Optional<String> predict(String prefix) {
-		return predict(prefix, 1).stream().findFirst();
+
+		String errorMessage = "please enter a valid prefix";
+		String invalidInputMessage = "invalid input";
+		Optional<String> inputPrefix = Optional.ofNullable(prefix);
+		  // Pre-condition for this method to operate correctly:
+		assert  Pattern.matches("[a-zA-Z]+", inputPrefix.get()) : invalidInputMessage;
+		assert !inputPrefix.get().isEmpty() : errorMessage;
+		return predict(inputPrefix.get(), 1).stream().findFirst();
 	}
 
 	/**
@@ -135,19 +165,26 @@ public class DictionaryTree {
 	 * @return the (at most) n most popular words with the specified prefix
 	 */
 	List<String> predict(String prefix, int n) {
-		DictionaryTree currentChild = this;
+		String errorMessage = "please enter a valid prefix";
+		String invalidInputMessage = "invalid input";
+		Optional<String> inputPrefix = Optional.ofNullable(prefix);
+		Optional<Integer> numOfPredictions = Optional.ofNullable(n);
+		// Pre-condition for this method to operate correctly:
+		assert  Pattern.matches("[a-zA-Z]+", inputPrefix.get()) : invalidInputMessage;
+		assert !inputPrefix.get().isEmpty() && numOfPredictions.isPresent(): errorMessage;
+		Optional<DictionaryTree> currentChild = Optional.of(this);
 		for (char letter : prefix.toCharArray()) {
-			currentChild = currentChild.children.get(letter);
-			if (currentChild == null)
+			currentChild = Optional.of(currentChild.get().children.get(letter));
+			if (!currentChild.isPresent())
 				break;
 		}
 		ArrayList<PopularWord> results = new ArrayList<>();
-		if (currentChild != null) {
-			currentChild.accumulate(results, prefix);
+		if (currentChild.isPresent()) {
+			currentChild.get().accumulate(results, prefix);
 		}
 		return results.stream()
 				.sorted((popularWord1, popularWord2) -> Integer.compare(popularWord1.popularity,popularWord2.popularity))
-				.limit(n)
+				.limit(numOfPredictions.get())
 				.map((popularWord) -> popularWord.word)
 				.collect(Collectors.toList());
 	}

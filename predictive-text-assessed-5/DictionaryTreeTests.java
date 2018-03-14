@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +21,6 @@ public class DictionaryTreeTests {
 	public void heightOfWordShouldBeWordLength() {
 		DictionaryTree unit = new DictionaryTree();
 		unit.insert("word", 0);
-		System.out.println(unit.size() + " " + unit.height());
 		Assertions.assertEquals("word".length(), unit.height());
 	}
 
@@ -33,17 +33,26 @@ public class DictionaryTreeTests {
 		unit.insert("wore");
 		Assertions.assertEquals(4, unit.numLeaves());
 	}
+	
+	@Test(expected = AssertionError.class)
+	public void shouldReturnInvalidInput() {
+		DictionaryTree unit = new DictionaryTree();
+		unit.insert("2");
+	}
 
 	@Test
 	public void removeShouldBeTrue() {
 		DictionaryTree unit = new DictionaryTree();
-		unit.insert("word");
-		unit.insert("work");
-		unit.insert("wort");
-		unit.insert("wore");
-		unit.insert("wores");
-		Assertions.assertEquals(true, unit.remove("wore"));
-		Assertions.assertEquals(4, unit.numLeaves());
+		// unit.insert("word");
+		// unit.insert("wordydie");
+		// unit.insert("wort");
+		// unit.insert("wore");
+		// unit.insert("wores");
+		unit.insert("bread");
+		unit.insert("branch");
+		Assertions.assertEquals(true, unit.remove("bread"));
+		Assertions.assertEquals(1, unit.numLeaves());
+
 	}
 
 	@Test
@@ -52,6 +61,12 @@ public class DictionaryTreeTests {
 		unit.insert("word");
 		Assertions.assertEquals(true, unit.contains("word"));
 
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void containsShouldReTurnAssertionError() {
+		DictionaryTree unit = new DictionaryTree();
+		unit.remove("bst");
 	}
 
 	@Test
@@ -88,6 +103,15 @@ public class DictionaryTreeTests {
 	}
 	
 	@Test
+	public void predictWithoutPopularityTest() {
+		DictionaryTree unit = new DictionaryTree();
+		unit.insert("word");
+		Optional<String> listOfAllWords = Optional.of("word");
+		Assertions.assertEquals(listOfAllWords, unit.predict("w"));
+
+	}
+
+	@Test
 	public void maximumBranchShouldBeLonger() {
 		DictionaryTree unit = new DictionaryTree();
 		unit.insert("word");
@@ -96,14 +120,25 @@ public class DictionaryTreeTests {
 		Assertions.assertEquals(3, unit.maximumBranching());
 	}
 
-	
+	@Test
+	public void maximumBranchShouldZero() {
+		DictionaryTree unit = new DictionaryTree();
+		Assertions.assertEquals(0, unit.maximumBranching());
+	}
 	@Test
 	public void shouldInsertWordIntoDictionaryTree() {
 		DictionaryTree unit = new DictionaryTree();
 		unit.insert("savage");
 		Assertions.assertEquals(true, unit.contains("savage"));
 	}
-	
+
+	@Test
+	public void sizeShouldBesix() {
+		DictionaryTree unit = new DictionaryTree();
+		unit.insert("savage");
+		Assertions.assertEquals(7, unit.size());
+	}
+
 	@Test
 	public void shouldInsertsWordInOrderOfPopularityIntoDictionaryTree() {
 		DictionaryTree unit = new DictionaryTree();
@@ -114,5 +149,11 @@ public class DictionaryTreeTests {
 		Assertions.assertEquals(true, unit.contains("work"));
 		Assertions.assertEquals(true, unit.contains("word"));
 		Assertions.assertEquals(true, unit.contains("savage"));
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void removeShouldReTurnAssertionError() {
+		DictionaryTree unit = new DictionaryTree();
+		unit.remove("bst");
 	}
 }

@@ -33,7 +33,7 @@ public class CLI {
 
     public static void main(String[] args) throws IOException {
         System.out.print("Loading dictionary ... ");
-        DictionaryTree d = loadWords(new File(args[1]));
+        DictionaryTree d = loadWords(new File(args[0]));
         System.out.println("done");
         System.out.println(d.allWords().size());
         System.out.println("Enter prefixes for prediction below.");
