@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
  * @author Kelsey McKenna
  */
 public class DictionaryTreeTests {
-
+	//all height test
 	@Test
 	public void heightOfRootShouldBeZero() {
 		DictionaryTree unit = new DictionaryTree();
@@ -24,6 +24,7 @@ public class DictionaryTreeTests {
 		Assertions.assertEquals("word".length(), unit.height());
 	}
 
+	//num leaves test
 	@Test
 	public void numOfLeaveShouldBeFour() {
 		DictionaryTree unit = new DictionaryTree();
@@ -34,21 +35,17 @@ public class DictionaryTreeTests {
 		Assertions.assertEquals(4, unit.numLeaves());
 	}
 	
-	@Test(expected = AssertionError.class)
-	public void shouldReturnInvalidInput() {
-		DictionaryTree unit = new DictionaryTree();
-		unit.insert("2");
-	}
+	
 
 	@Test
 	public void removeShouldBeTrue() {
 		DictionaryTree unit = new DictionaryTree();
-		unit.insert("bread");
-		unit.insert("branch");
-		Assertions.assertEquals(true, unit.contains("bread"));
-		unit.remove("bread");
+		unit.insert("bottle");
+		unit.insert("botton");
+		Assertions.assertEquals(true, unit.contains("bottle"));
+		unit.remove("bottle");
 		System.out.println(unit.allWords());
-		Assertions.assertEquals(false, unit.contains("bread"));
+		Assertions.assertEquals(false, unit.contains("bottle"));
 
 	}
 
@@ -122,6 +119,7 @@ public class DictionaryTreeTests {
 		DictionaryTree unit = new DictionaryTree();
 		Assertions.assertEquals(0, unit.maximumBranching());
 	}
+	
 	@Test
 	public void shouldInsertWordIntoDictionaryTree() {
 		DictionaryTree unit = new DictionaryTree();
@@ -152,5 +150,11 @@ public class DictionaryTreeTests {
 	public void removeShouldReTurnAssertionError() {
 		DictionaryTree unit = new DictionaryTree();
 		unit.remove("bst");
+	}
+	
+	@Test(expected = AssertionError.class)
+	public void shouldReturnInvalidInput() {
+		DictionaryTree unit = new DictionaryTree();
+		unit.insert("2");
 	}
 }

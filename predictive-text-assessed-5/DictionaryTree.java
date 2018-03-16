@@ -296,7 +296,6 @@ public class DictionaryTree {
 		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
 			String word = childNodes.getValue().longestWord();
 			if (word.length() >= longestWord.length()) {
-
 				longestWord = childNodes.getKey() + word;
 
 			}
