@@ -43,15 +43,12 @@ public class DictionaryTreeTests {
 	@Test
 	public void removeShouldBeTrue() {
 		DictionaryTree unit = new DictionaryTree();
-		// unit.insert("word");
-		// unit.insert("wordydie");
-		// unit.insert("wort");
-		// unit.insert("wore");
-		// unit.insert("wores");
 		unit.insert("bread");
 		unit.insert("branch");
-		Assertions.assertEquals(true, unit.remove("bread"));
-		Assertions.assertEquals(1, unit.numLeaves());
+		Assertions.assertEquals(true, unit.contains("bread"));
+		unit.remove("bread");
+		System.out.println(unit.allWords());
+		Assertions.assertEquals(false, unit.contains("bread"));
 
 	}
 

@@ -29,7 +29,7 @@ public class DictionaryTree {
 		String invalidInputMessage = "invalid input";
 		Optional<String> inputWord = Optional.ofNullable(word);
 		  // Pre-condition for this method to operate correctly:
-		assert  Pattern.matches("[a-zA-Z]+", inputWord.get()) : invalidInputMessage;
+		assert !inputWord.get().matches(".*\\d.*") : invalidInputMessage ; 
 		assert !inputWord.get().isEmpty(): errorMessage;
 		insert(word, 0);
 		
@@ -52,7 +52,7 @@ public class DictionaryTree {
 		Optional<String> inputWord = Optional.ofNullable(word);
 		Optional<Integer> inputPopularity = Optional.ofNullable(popularity);
 		  // Pre-condition for this method to operate correctly:
-		assert  Pattern.matches("[a-zA-Z]+", inputWord.get()) : invalidInputMessage;
+		assert !inputWord.get().matches(".*\\d.*") : invalidInputMessage ; 
 		assert !inputWord.get().isEmpty() && inputPopularity.isPresent(): errorMessage;
 		DictionaryTree currentChild = this;
 		int index = 0;
@@ -86,29 +86,33 @@ public class DictionaryTree {
 		return result;
 	}
 
-	private boolean removeHelper(String word) {
+	public boolean removeHelper(String word) {
 		if (word.isEmpty()) {
 			popularity = Optional.empty();
 			return true;
 		}
 
 		if (contains(word)) {
-			System.out.println("word being removed: "+word);
-			return children.get(word.charAt(0)).remove(word.substring(1));
+			return children.get(word.charAt(0)).removeHelper(word.substring(1));
 		}
 		return false;
 
 	}
 
 	void prune() {
-		for (Entry<Character, DictionaryTree> child : children.entrySet()) {
+		List<Character> charsToRemove = new ArrayList<>();
+		for (Map.Entry<Character, DictionaryTree> child : children.entrySet()) {
 			List<PopularWord> popular = new ArrayList<>();
 			child.getValue().accumulate(popular, "");
 			if (popular.isEmpty()) {
-				children.remove(child.getKey());
+				charsToRemove.add(child.getKey());
 			} else {
 				child.getValue().prune();
 			}
+		}
+		
+		for(char c: charsToRemove){
+			children.remove(c);
 		}
 
 	}
@@ -126,9 +130,8 @@ public class DictionaryTree {
 		String invalidInputMessage = "invalid input";
 		Optional<String> inputWord = Optional.ofNullable(word);
 		  // Pre-condition for this method to operate correctly:
-		assert  Pattern.matches("[a-zA-Z]+", inputWord.get()) : invalidInputMessage;
+		assert !inputWord.get().matches(".*\\d.*") : invalidInputMessage ;
 		assert !inputWord.get().isEmpty() : errorMessage;
-		
 		Optional<DictionaryTree> currentChild = Optional.of(this);
 		for (char letter : word.toCharArray()) {
 			currentChild = Optional.ofNullable(currentChild.get().children.get(letter));
@@ -145,13 +148,7 @@ public class DictionaryTree {
 	 *         no such word is found.
 	 */
 	Optional<String> predict(String prefix) {
-
-		String errorMessage = "please enter a valid prefix";
-		String invalidInputMessage = "invalid input";
 		Optional<String> inputPrefix = Optional.ofNullable(prefix);
-		  // Pre-condition for this method to operate correctly:
-		assert  Pattern.matches("[a-zA-Z]+", inputPrefix.get()) : invalidInputMessage;
-		assert !inputPrefix.get().isEmpty() : errorMessage;
 		return predict(inputPrefix.get(), 1).stream().findFirst();
 	}
 
@@ -170,7 +167,7 @@ public class DictionaryTree {
 		Optional<String> inputPrefix = Optional.ofNullable(prefix);
 		Optional<Integer> numOfPredictions = Optional.ofNullable(n);
 		// Pre-condition for this method to operate correctly:
-		assert  Pattern.matches("[a-zA-Z]+", inputPrefix.get()) : invalidInputMessage;
+		assert !inputPrefix.get().matches(".*\\d.*") : invalidInputMessage ;
 		assert !inputPrefix.get().isEmpty() && numOfPredictions.isPresent(): errorMessage;
 		Optional<DictionaryTree> currentChild = Optional.of(this);
 		for (char letter : prefix.toCharArray()) {

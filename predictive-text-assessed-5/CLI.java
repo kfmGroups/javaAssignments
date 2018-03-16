@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +19,7 @@ public class CLI {
      * @throws IOException if there was a problem opening/reading from the file
      */
     static DictionaryTree loadWords(File f) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {
             String word;
             DictionaryTree d = new DictionaryTree();
             int i = 1;
@@ -40,7 +41,7 @@ public class CLI {
 
         try (BufferedReader fromUser = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
-                System.out.println("---> " + d.predict(fromUser.readLine()));
+                System.out.println("---> " + d.predict(fromUser.readLine(),5));
             }
         }
     }
