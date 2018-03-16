@@ -24,7 +24,7 @@ public class CLI {
             DictionaryTree d = new DictionaryTree();
             int i = 1;
             while ((word = reader.readLine()) != null) {
-                d.insert(word, i);
+                d.insert(word,i);
                 i++;
             }
 
@@ -36,12 +36,11 @@ public class CLI {
         System.out.print("Loading dictionary ... ");
         DictionaryTree d = loadWords(new File(args[0]));
         System.out.println("done");
-        System.out.println(d.allWords().size());
         System.out.println("Enter prefixes for prediction below.");
 
         try (BufferedReader fromUser = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
-                System.out.println("---> " + d.predict(fromUser.readLine(),5));
+                System.out.println("---> " + d.predict(fromUser.readLine()));
             }
         }
     }

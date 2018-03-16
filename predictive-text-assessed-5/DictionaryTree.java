@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,13 +27,14 @@ public class DictionaryTree {
 	 */
 	void insert(String word) {
 		String errorMessage = "please enter a valid word";
-		String invalidInputMessage = "invalid input";
+		String notInsertedMessage = "word was not inserted into the tree";
 		Optional<String> inputWord = Optional.ofNullable(word);
 		  // Pre-condition for this method to operate correctly:
-		assert !inputWord.get().matches(".*\\d.*") : invalidInputMessage ; 
 		assert !inputWord.get().isEmpty(): errorMessage;
-		insert(word, 0);
-		
+		insert(inputWord.get(), 0);
+		// Post-condition :
+		assert contains(inputWord.get()) : notInsertedMessage;
+		//
 		
 	}
 
@@ -48,22 +50,19 @@ public class DictionaryTree {
 	 */
 	void insert(String word, int popularity) {
 		String errorMessage = "please enter a valid word";
-		String invalidInputMessage = "invalid input";
+		String notInsertedMessage = "word was not inserted into the tree";
 		Optional<String> inputWord = Optional.ofNullable(word);
-		Optional<Integer> inputPopularity = Optional.ofNullable(popularity);
 		  // Pre-condition for this method to operate correctly:
-		assert !inputWord.get().matches(".*\\d.*") : invalidInputMessage ; 
-		assert !inputWord.get().isEmpty() && inputPopularity.isPresent(): errorMessage;
+		assert !inputWord.get().isEmpty() && popularity >= 0: errorMessage;
 		DictionaryTree currentChild = this;
-		int index = 0;
-		int lastIndex = word.length() - 1;
 		for (char letter : word.toCharArray()) {
 			currentChild = currentChild.children.computeIfAbsent(letter, (cha) -> new DictionaryTree());
-			index++;
 		}
 		currentChild.popularity = Optional.of(popularity);// from the root all
 															// the down it is a
 															// valid wpord
+		 // post-condition :
+		assert contains(inputWord.get()) : notInsertedMessage;
 
 	}
 
@@ -79,11 +78,13 @@ public class DictionaryTree {
 	boolean remove(String word) {
 		
 		String errorMessage = "please enter a word in the dictionary";
-		  // Pre-condition for this method to operate correctly:
-		assert contains(word) : errorMessage;
+		String notRemovedMessage = "word not removed";
 		boolean result = removeHelper(word);
 		prune();
+		 // Post-condition:
+		assert !contains(word) : notRemovedMessage;
 		return result;
+		
 	}
 
 	public boolean removeHelper(String word) {
@@ -127,10 +128,8 @@ public class DictionaryTree {
 	 */
 	boolean contains(String word) {
 		String errorMessage = "please enter a valid word";
-		String invalidInputMessage = "invalid input";
 		Optional<String> inputWord = Optional.ofNullable(word);
 		  // Pre-condition for this method to operate correctly:
-		assert !inputWord.get().matches(".*\\d.*") : invalidInputMessage ;
 		assert !inputWord.get().isEmpty() : errorMessage;
 		Optional<DictionaryTree> currentChild = Optional.of(this);
 		for (char letter : word.toCharArray()) {
@@ -148,8 +147,7 @@ public class DictionaryTree {
 	 *         no such word is found.
 	 */
 	Optional<String> predict(String prefix) {
-		Optional<String> inputPrefix = Optional.ofNullable(prefix);
-		return predict(inputPrefix.get(), 1).stream().findFirst();
+		return predict(prefix, 1).stream().findFirst();
 	}
 
 	/**
@@ -163,27 +161,23 @@ public class DictionaryTree {
 	 */
 	List<String> predict(String prefix, int n) {
 		String errorMessage = "please enter a valid prefix";
-		String invalidInputMessage = "invalid input";
-		Optional<String> inputPrefix = Optional.ofNullable(prefix);
-		Optional<Integer> numOfPredictions = Optional.ofNullable(n);
 		// Pre-condition for this method to operate correctly:
-		assert !inputPrefix.get().matches(".*\\d.*") : invalidInputMessage ;
-		assert !inputPrefix.get().isEmpty() && numOfPredictions.isPresent(): errorMessage;
+		assert prefix != null: errorMessage;
 		Optional<DictionaryTree> currentChild = Optional.of(this);
 		for (char letter : prefix.toCharArray()) {
-			currentChild = Optional.of(currentChild.get().children.get(letter));
-			if (!currentChild.isPresent())
-				break;
+			currentChild = currentChild.flatMap((child) -> child.getChild(letter));
 		}
 		ArrayList<PopularWord> results = new ArrayList<>();
-		if (currentChild.isPresent()) {
-			currentChild.get().accumulate(results, prefix);
-		}
+		currentChild.ifPresent((child) -> child.accumulate(results, prefix));
 		return results.stream()
 				.sorted((popularWord1, popularWord2) -> Integer.compare(popularWord1.popularity,popularWord2.popularity))
-				.limit(numOfPredictions.get())
+				.limit(n)
 				.map((popularWord) -> popularWord.word)
 				.collect(Collectors.toList());
+	}
+	
+	private Optional<DictionaryTree> getChild(char letter){
+		return Optional.ofNullable(children.get(letter));
 	}
 
 	private class PopularWord {
@@ -198,9 +192,7 @@ public class DictionaryTree {
 	}
 
 	private void accumulate(List<PopularWord> accumulator, String prefix) {
-		if (popularity.isPresent()) {
-			accumulator.add(new PopularWord(prefix, popularity.get()));
-		}
+		popularity.ifPresent((pop) -> accumulator.add(new PopularWord(prefix, pop)));
 		if (!children.isEmpty()) {
 			for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
 				childNodes.getValue().accumulate(accumulator, prefix + childNodes.getKey());
@@ -214,18 +206,6 @@ public class DictionaryTree {
 	 */
 	int numLeaves() {
 
-//		if (children.isEmpty()) {
-//			return 1;
-//		}
-//		int numLeaves = 0;
-//		for (char letter : children.keySet()) {
-//			DictionaryTree childnode = children.get(letter);
-//			if (childnode != null) {
-//				numLeaves += childnode.numLeaves();
-//			}
-//		}
-//
-//		return numLeaves;
 		return fold((tree, cResults) ->{
 			if(tree.children.isEmpty())
 				return 1;
@@ -240,11 +220,6 @@ public class DictionaryTree {
 	 * @return the maximum number of children held by any node in this tree
 	 */
 	int maximumBranching() {
-//		int maximumChild = children.size();
-//		for (DictionaryTree childNodes : children.values()) {
-//			maximumChild = Math.max(maximumChild, childNodes.maximumBranching());
-//		}
-//		return maximumChild;
 		return fold((tree, cResults) -> {
 			int maximumChild = children.size();
 			for(int childMaximumBranch: cResults)
@@ -257,11 +232,6 @@ public class DictionaryTree {
 	 * @return the height of this tree, i.e. the length of the longest branch
 	 */
 	int height() {
-//		int heightOfTheTree = -1;
-//		for (DictionaryTree childNodes : children.values()) {
-//			heightOfTheTree = Math.max(heightOfTheTree, childNodes.height());
-//		}
-//		return heightOfTheTree + 1;
 		return fold((tree, cResults) -> {
 			int heightOfTree = -1;
 			for(int childHeight: cResults)
@@ -275,32 +245,18 @@ public class DictionaryTree {
 	 * @return the number of nodes in this tree
 	 */
 	int size() {
-		// int sizeOfTree = 1;
-		// for (DictionaryTree childNodes : children.values()) {
-		// sizeOfTree += childNodes.size();
-		// }
-		// return sizeOfTree;
-		return fold((tree, cResults) -> {
-			int size = 1;
-			for (int childSize : cResults)
-				size += childSize;
-			return size;
-		});
+		return fold((tree, cResults) -> 1 + cResults.stream().reduce(0,(a,b) -> (a+b)));
 	}
+	
+	
 
 	/**
 	 * @return the longest word in this tree
 	 */
 	String longestWord() {
-		String longestWord = "";
-		for (Entry<Character, DictionaryTree> childNodes : children.entrySet()) {
-			String word = childNodes.getValue().longestWord();
-			if (word.length() >= longestWord.length()) {
-				longestWord = childNodes.getKey() + word;
-
-			}
-		}
-		return longestWord;
+		return allWords().stream()
+				.sorted(((word1, word2) -> Integer.compare(word2.length(), word1.length())))
+				.findFirst().orElse("");
 	}
 
 	/**
