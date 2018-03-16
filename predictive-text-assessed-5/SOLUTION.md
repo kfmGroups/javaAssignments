@@ -20,5 +20,5 @@ for allwords(), I get list of popular word and the word from the word and place 
 
 Finally, for prediction(prefix, numOfPredictions), I traverse through each character, then call all words and sort it by popularity and limit it by the numOfPredictions given and return the list of words. Then for predict(prefix) converts a list of on element to an optional.
 
-##Git link
+## Git link.
 https://git.cs.bham.ac.uk/kxf672/software-workshop-assignment.git
